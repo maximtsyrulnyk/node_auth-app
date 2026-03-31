@@ -26,5 +26,9 @@
   },
   "mateAcademy": {
     "projectType": "javascript"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.6.0",
+    "prisma": "^7.6.0"
   }
 }
