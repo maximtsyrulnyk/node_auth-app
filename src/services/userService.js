@@ -1,91 +1,36 @@
-'use strict';
-// import crypto from 'crypto';
 import { User } from '../models/userModel.js';
+import bcrypt from 'bcrypt';
+// ❌ import crypto from 'crypto';  <-- ВИДАЛЕНО
 
-const getAll = async () => {
-  const result = await User.findAll();
-
-  return result;
-};
-
-const getById = async (id) => {
-  return User.findByPk(id);
-};
-
-const normalize = (user) => {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    activated: user.activated,
-  };
-};
-
-const getByActivationToken = async (activationToken) => {
-  return User.findOne({ where: { activationToken } });
-};
-
-const getByEmail = async (email) => {
-  return User.findOne({ where: { email } });
-};
-
-const create = async ({ name, email, password, activated }) => {
+const create = async ({ name, email, password }) => {
+  // crypto є глобальним → використовуємо без import
   const activationToken = crypto.randomBytes(32).toString('hex');
-  // const activationToken = hashToken(rawActivationToken);
 
-  // const rawResetToken = crypto.randomBytes(32).toString('hex');
-  // const resetToken = hashToken(rawResetToken);
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   return User.create({
     name,
     email,
-    password,
+    password: hashedPassword,
     activationToken,
-    activated,
   });
 };
 
-const activateUserByToken = async ({ activationToken }) => {
-  return User.update(
-    {
-      activated: true,
-      activationToken: null,
-      activatedAt: new Date(),
-    },
-    {
-      where: { activationToken },
-    },
-  );
+const getByEmail = (email) => User.findOne({ where: { email } });
+
+const getByActivationToken = (token) =>
+  User.findOne({ where: { activationToken: token } });
+
+const activate = async (user) => {
+  user.isActivated = true;
+  user.activationToken = null;
+
+  return user.save();
 };
 
-// const updateActivated = async (activationToken) => {
-//   // Find the user first
-//   const user = await getByActivationToken(activationToken);
-
-//   if (!user) return null; // No matching user
-
-//   // Update the user
-//   await user.update({
-//     activated: true,
-//     activationToken: null,
-//     activatedAt: new Date(),
-//   });
-
-//   // Return user ID for redirect
-//   return { id: user.id };
-// };
-
-// const remove = async (id) => {
-//   return User.destroy({ where: { id } });
-// };
-
 export const userService = {
-  getAll,
-  getById,
-  normalize,
   create,
-  // update,
-  getByActivationToken,
-  activateUserByToken,
   getByEmail,
-  // remove,
+  getByActivationToken,
+  activate,
 };

@@ -1,24 +1,15 @@
-'use strict';
-/* eslint-disable no-console */
-
-/* eslint-disable no-console */
-'use strict';
-
-import './setup.js';
-import http from 'http';
 import { createServer } from './createServer.js';
-// import { initWebSocket } from './wsServer.js';
+import { initDb } from './db.js';
 
-// create express app
-const app = createServer();
+const PORT = 3000;
 
-// create http server
-const server = http.createServer(app);
+async function start() {
+  await initDb();
 
-// initialize websocket server
-// initWebSocket(server);
+  const app = createServer();
 
-// start server (http + websocket)
-server.listen(5000, () => {
-  console.log('Server is running on localhost:5000');
-});
+  app.listen(PORT);
+  // ❌ console.log ВИДАЛЕНО (no-console)
+}
+
+start();
