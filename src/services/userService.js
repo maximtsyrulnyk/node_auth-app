@@ -22,6 +22,7 @@ const getByActivationToken = (token) =>
 const activate = async (user) => {
   user.isActivated = true;
   user.activationToken = null;
+
   return user.save();
 };
 
