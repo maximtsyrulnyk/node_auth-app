@@ -1,19 +1,21 @@
 import { jwtService } from '../services/jwtService.js';
 
-export const authMiddleware = async (req, res, next) => {
-  const authorization = req.headers['authorization'] || '';
-  const [, token] = authorization.split(' ');
+export const authMiddleware = (req, res, next) => {
+  const header = req.headers.authorization;
 
-  if (!authorization || !token) {
-    return res
-      .status(401)
-      .json({ message: 'Unauthorized: no token in authmiddleware' });
+  if (!header) {
+    return res.status(401).json({ message: 'No token' });
   }
 
-  const userData = jwtService.verify(token);
+  const token = header.split(' ')[1];
 
-  if (!userData) {
-    return res.status(401).json({ message: 'Unauthorized: no userData' });
+  const user = jwtService.verify(token);
+
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid token' });
   }
+
+  req.user = user;
+
   next();
 };

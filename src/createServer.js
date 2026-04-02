@@ -10,7 +10,7 @@ export const createServer = () => {
 
   app.use('/users', userRoutes);
 
-  // ✅ 404 handler
+  // 404 handler
   app.use('*', (req, res) => {
     res.status(404).json({ message: 'Route not found' });
   });

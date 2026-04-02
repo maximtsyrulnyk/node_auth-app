@@ -1,61 +1,13 @@
-'use strict';
+import { Router } from 'express';
+import * as userController from '../controllers/userController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
-// import { ownerMiddleware } from '../middlewares/ownerMiddleware.js';
-import express from 'express';
-import {
-  getAllUsers,
-  getUserById,
-  getUserByActivationToken,
-  createUser,
-  // updateUser,
-  updateUserActivated,
-  loginUser,
-  changeUserName,
-  changeUserPassword,
-  changeUserEmail,
-  resetUserPassword,
-  resetPassword,
-  refresh,
-  logout,
-} from '../controllers/userController.js';
 
-const router = express.Router();
+export const userRoutes = new Router();
 
-router.get('/', getAllUsers);
-router.post('/registration', createUser);
+userRoutes.post('/register', userController.register);
+userRoutes.get('/activate/:token', userController.activate);
+userRoutes.post('/login', userController.login);
 
-router.post('/login', loginUser);
-router.get('/refresh', refresh);
-router.post('/reset-password', resetPassword);
-router.patch('/reset-password/:resetToken', resetUserPassword);
-
-router.patch('/activation/:activationToken', updateUserActivated);
-router.get('/activation/:activationToken', getUserByActivationToken);
-
-router.patch(
-  '/:id/change-name',
-  authMiddleware,
-  // ownerMiddleware,
-  changeUserName,
-);
-
-router.patch(
-  '/:id/change-password',
-  authMiddleware,
-  // ownerMiddleware,
-  changeUserPassword,
-);
-
-router.patch(
-  '/:id/change-email',
-  authMiddleware,
-  // ownerMiddleware,
-  changeUserEmail,
-);
-router.get('/:id', authMiddleware, getUserById);
-// router.get('/me', authMiddleware, async (req, res) => {
-//   const user = await User.findByPk(req.user.id);
-//   res.json(user);
-// });
-router.post('/logout', logout);
-export default router;
+userRoutes.post('/logout', authMiddleware, (req, res) => {
+  res.json({ message: 'Logged out' });
+});

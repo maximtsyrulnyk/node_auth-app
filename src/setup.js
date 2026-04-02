@@ -1,5 +1,3 @@
-import { User } from './models/userModel.js';
-import { Token } from './models/tokenModel.js';
+import dotenv from 'dotenv';
 
-User.sync({ force: false });
-Token.sync({ force: false });
+dotenv.config();

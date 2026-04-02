@@ -12,8 +12,6 @@ const remove = (refreshToken) => {
   return Token.destroy({ where: { refreshToken } });
 };
 
-// ❌ removeByUserId ВИДАЛЕНО
-
 export const tokenService = {
   save,
   getByToken,
